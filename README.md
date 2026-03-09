@@ -1,106 +1,106 @@
 # Calculator Challenge
 
-Este projeto implementa uma API RESTful de calculadora com comunicação assíncrona via Apache Kafka, utilizando Spring Boot e suporte para precisão arbitrária em números decimais.
+This project implements a RESTful calculator API with asynchronous communication via Apache Kafka, using Spring Boot and support for arbitrary precision in decimal numbers.
 
-## Funcionalidades
+## Features
 
-- Operações básicas: soma, subtração, multiplicação e divisão
-- Suporte para 2 operandos (a e b)
-- Precisão arbitrária para números decimais usando BigDecimal
-- Comunicação assíncrona entre módulos via Kafka
-- Identificadores únicos de requisição com propagação MDC
-- Logging estruturado com SLF4J e Logback
+- Basic operations: addition, subtraction, multiplication, and division
+- Support for 2 operands (a and b)
+- Arbitrary precision for decimal numbers using BigDecimal
+- Asynchronous communication between modules via Kafka
+- Unique request identifiers with MDC propagation
+- Structured logging with SLF4J and Logback
 
-## Arquitetura
+## Architecture
 
-O projeto é dividido em 2 módulos Maven:
-- **rest**: API REST que recebe requisições HTTP e as envia para processamento via Kafka
-- **calculator**: Serviço que processa as operações matemáticas e retorna resultados via Kafka
+The project is divided into 2 Maven modules:
+- **rest**: REST API that receives HTTP requests and sends them for processing via Kafka
+- **calculator**: Service that processes mathematical operations and returns results via Kafka
 
-## Pré-requisitos
+## Prerequisites
 
 - Java 21
 - Maven 3.6+
-- Docker e Docker Compose
+- Docker and Docker Compose
 
-## Como Executar
+## How to Run
 
-1. **Clone o repositório** (se aplicável)
+1. **Clone the repository** (if applicable)
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/XFalconD/calculator-challenge/
    cd calculator-challenge
    ```
 
-2. **Construa os módulos**
+2. **Build the modules**
    ```bash
-   # Construir calculator
+   # Build calculator
    cd calculator
    mvn clean package -DskipTests
    cd ..
 
-   # Construir rest
+   # Build rest
    cd rest
    mvn clean package -DskipTests
    cd ..
    ```
 
-3. **Execute com Docker Compose**
+3. **Run with Docker Compose**
    ```bash
    docker-compose up --build
    ```
 
-   Isso iniciará:
+   This will start:
    - Zookeeper
    - Kafka
-   - Serviço calculator
-   - Serviço rest (porta 8080)
+   - calculator service
+   - rest service (port 8080)
 
-4. **Teste a API**
+4. **Test the API**
 
-   Exemplos de requisições:
+   Request examples:
 
    ```bash
-   # Soma
+   # Sum
    curl "http://localhost:8080/sum?a=10&b=5"
 
-   # Subtração
+   # Subtraction
    curl "http://localhost:8080/subtract?a=10&b=5"
 
-   # Multiplicação
+   # Multiplication
    curl "http://localhost:8080/multiply?a=10&b=5"
 
-   # Divisão com precisão arbitrária
+   # Division with arbitrary precision
    curl "http://localhost:8080/divide?a=1&b=3"
    ```
 
-## Configuração
+## Configuration
 
-As configurações estão em `application.properties`:
-- `calculator.precision`: Precisão para operações (padrão: 50)
-- `calculator.request.timeout`: Timeout para requisições Kafka (padrão: 30 segundos)
-- Tópicos Kafka configuráveis
+Settings are in `application.properties`:
+- `calculator.precision`: Precision for operations (default: 10)
+- `calculator.request.timeout`: Timeout for Kafka requests (default: 30 seconds)
+- Configurable Kafka topics
 
-## Testes
+## Tests
 
-Execute os testes unitários:
+Execute unit tests:
 
 ```bash
-# No módulo rest
+# In the rest module
 cd rest
 mvn test
 
-# No módulo calculator
+# In the calculator module
 cd calculator
 mvn test
 ```
 
 ## Logs
 
-- Logs são gravados em arquivo (`spring.log`) e console
-- Cada linha de log inclui o ID da requisição via MDC
-- Nível de log configurável via `application.properties`
+- Logs are written to file (`spring.log`) and console
+- Each log line includes the request ID via MDC
+- Log level configurable via `application.properties`
 
 ## Docker
 
-- Imagens Docker são geradas automaticamente via Spring Boot Maven Plugin
-- Docker Compose orquestra todos os serviços necessários
+- Docker images are generated automatically via Spring Boot Maven Plugin
+- Docker Compose orchestrates all required services
