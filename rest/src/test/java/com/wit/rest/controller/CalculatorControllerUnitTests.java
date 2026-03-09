@@ -1,25 +1,22 @@
 package com.wit.rest.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.wit.rest.dto.ApiResponse;
-import com.wit.rest.exception.InvalidOperandException;
 import com.wit.rest.service.CalculatorService;
 import com.wit.rest.util.MDCUtil;
 
@@ -117,6 +114,22 @@ public class CalculatorControllerUnitTests {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("test-request-123", response.getHeaders().getFirst("X-Request-ID"));
+    }
+
+    @Test
+    @DisplayName("Divide endpoint propagates normalized zero result")
+    void testDivide_ZeroDecimalReturnsZeroScale() {
+        BigDecimal a = BigDecimal.ZERO;
+        BigDecimal b = new BigDecimal("0.10000");
+        BigDecimal expectedResult = BigDecimal.ZERO; // scale 0
+
+        when(calculatorService.divide(a, b)).thenReturn(expectedResult);
+
+        ResponseEntity<ApiResponse> response = calculatorController.divide(a, b);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, expectedResult.compareTo(response.getBody().getResult()));
+        assertEquals(0, response.getBody().getResult().scale());
     }
 
     @Test

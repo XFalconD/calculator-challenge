@@ -1,11 +1,9 @@
 package com.wit.calculator.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,6 +116,23 @@ public class CalculatorServiceTests {
         OperationResponse response = calculatorService.process(request);
         assertEquals("ERROR", response.getStatus());
         assertEquals("Operands cannot be null", response.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Zero divided by a decimal returns plain zero (scale 0)")
+    void testZeroDividedByDecimal() {
+        OperationRequest request = OperationRequest.builder()
+                .requestId("req-7")
+                .operation(OperationType.DIVIDE)
+                .operandA(BigDecimal.ZERO)
+                .operandB(new BigDecimal("0.10000"))
+                .build();
+        
+        OperationResponse response = calculatorService.process(request);
+        assertEquals("SUCCESS", response.getStatus());
+        assertEquals(0, response.getResult().compareTo(BigDecimal.ZERO));
+        // stripTrailingZeros should yield scale 0 for a zero value
+        assertEquals(0, response.getResult().scale());
     }
 
     @Test

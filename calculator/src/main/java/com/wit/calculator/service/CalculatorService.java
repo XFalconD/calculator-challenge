@@ -1,7 +1,6 @@
 package com.wit.calculator.service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -63,8 +62,8 @@ public class CalculatorService {
                                 .errorMessage("Division by zero")
                                 .build();
                     }
-                    // Use arbitrary precision with MathContext
-                    result = a.divide(b, new MathContext(precision, RoundingMode.HALF_UP));
+
+                    result = a.divide(b, precision, RoundingMode.HALF_UP).stripTrailingZeros();
                     break;
                 default:
                     return OperationResponse.builder()
